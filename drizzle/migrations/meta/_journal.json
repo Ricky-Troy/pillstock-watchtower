@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794808735868,
+      "tag": "0000_pharmacy_stock_schema",
+      "breakpoints": true
+    }
+  ]
 }

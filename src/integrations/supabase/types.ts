@@ -14,16 +14,354 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: string | null
+          id: string
+          user_id: string | null
+          user_name: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          user_id?: string | null
+          user_name?: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          user_id?: string | null
+          user_name?: string
+        }
+        Relationships: []
+      }
+      alerts: {
+        Row: {
+          alert_type: Database["public"]["Enums"]["alert_type"]
+          created_at: string
+          id: string
+          medicine_id: string
+          message: string
+          resolved_at: string | null
+          resolved_by_name: string | null
+          status: Database["public"]["Enums"]["alert_status"]
+        }
+        Insert: {
+          alert_type: Database["public"]["Enums"]["alert_type"]
+          created_at?: string
+          id?: string
+          medicine_id: string
+          message: string
+          resolved_at?: string | null
+          resolved_by_name?: string | null
+          status?: Database["public"]["Enums"]["alert_status"]
+        }
+        Update: {
+          alert_type?: Database["public"]["Enums"]["alert_type"]
+          created_at?: string
+          id?: string
+          medicine_id?: string
+          message?: string
+          resolved_at?: string | null
+          resolved_by_name?: string | null
+          status?: Database["public"]["Enums"]["alert_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medicines: {
+        Row: {
+          category: string
+          created_at: string
+          current_stock: number
+          generic_name: string | null
+          id: string
+          is_active: boolean
+          minimum_level: number
+          name: string
+          unit: string
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          current_stock?: number
+          generic_name?: string | null
+          id?: string
+          is_active?: boolean
+          minimum_level?: number
+          name: string
+          unit?: string
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          current_stock?: number
+          generic_name?: string | null
+          id?: string
+          is_active?: boolean
+          minimum_level?: number
+          name?: string
+          unit?: string
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id: string
+          is_active?: boolean
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      stock_audits: {
+        Row: {
+          adjusted: boolean
+          adjusted_at: string | null
+          adjusted_by_name: string | null
+          created_at: string
+          discrepancy: number
+          id: string
+          medicine_id: string
+          notes: string | null
+          physical_quantity: number
+          recorded_quantity: number
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          adjusted?: boolean
+          adjusted_at?: string | null
+          adjusted_by_name?: string | null
+          created_at?: string
+          discrepancy: number
+          id?: string
+          medicine_id: string
+          notes?: string | null
+          physical_quantity: number
+          recorded_quantity: number
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          adjusted?: boolean
+          adjusted_at?: string | null
+          adjusted_by_name?: string | null
+          created_at?: string
+          discrepancy?: number
+          id?: string
+          medicine_id?: string
+          notes?: string | null
+          physical_quantity?: number
+          recorded_quantity?: number
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_audits_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_transactions: {
+        Row: {
+          balance_after: number
+          created_at: string
+          customer_name: string | null
+          id: string
+          medicine_id: string
+          notes: string | null
+          quantity: number
+          receipt_no: string | null
+          supplier: string | null
+          transaction_type: Database["public"]["Enums"]["transaction_type"]
+          unit_price: number
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          balance_after: number
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          medicine_id: string
+          notes?: string | null
+          quantity: number
+          receipt_no?: string | null
+          supplier?: string | null
+          transaction_type: Database["public"]["Enums"]["transaction_type"]
+          unit_price?: number
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          balance_after?: number
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          medicine_id?: string
+          notes?: string | null
+          quantity?: number
+          receipt_no?: string | null
+          supplier?: string | null
+          transaction_type?: Database["public"]["Enums"]["transaction_type"]
+          unit_price?: number
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_transactions_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      _write_log: {
+        Args: { _action: string; _details: string }
+        Returns: undefined
+      }
+      apply_audit_adjustment: {
+        Args: { _audit_id: string }
+        Returns: undefined
+      }
+      daily_movement: {
+        Args: { _category?: string; _month_start: string }
+        Returns: {
+          day: string
+          issued: number
+          received: number
+        }[]
+      }
+      has_any_role: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
+      log_auth_event: { Args: { _event: string }; Returns: undefined }
+      monthly_report: {
+        Args: { _category?: string; _month_start: string }
+        Returns: {
+          category: string
+          issued: number
+          medicine_id: string
+          name: string
+          received: number
+          sales_value: number
+          transactions: number
+          unit: string
+        }[]
+      }
+      record_audit: {
+        Args: {
+          _medicine_id: string
+          _notes?: string
+          _physical_quantity: number
+        }
+        Returns: string
+      }
+      record_sale: {
+        Args: { _customer_name?: string; _items: Json; _notes?: string }
+        Returns: string
+      }
+      record_stock_in: {
+        Args: {
+          _medicine_id: string
+          _notes?: string
+          _quantity: number
+          _supplier?: string
+        }
+        Returns: string
+      }
+      resolve_alert: { Args: { _alert_id: string }; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      alert_status: "ACTIVE" | "RESOLVED"
+      alert_type: "LOW_STOCK" | "OUT_OF_STOCK"
+      app_role: "admin" | "pharmacist" | "storekeeper"
+      transaction_type: "IN" | "OUT" | "ADJUST"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +488,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      alert_status: ["ACTIVE", "RESOLVED"],
+      alert_type: ["LOW_STOCK", "OUT_OF_STOCK"],
+      app_role: ["admin", "pharmacist", "storekeeper"],
+      transaction_type: ["IN", "OUT", "ADJUST"],
+    },
   },
 } as const
