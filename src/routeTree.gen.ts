@@ -15,10 +15,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedShellRouteImport } from './routes/_authenticated/_shell'
+import { Route as AuthenticatedShellAlertsRouteImport } from './routes/_authenticated/_shell/alerts'
 import { Route as AuthenticatedShellDashboardRouteImport } from './routes/_authenticated/_shell/dashboard'
 import { Route as AuthenticatedShellStockRouteImport } from './routes/_authenticated/_shell/stock'
 import { Route as AuthenticatedShellStockInRouteImport } from './routes/_authenticated/_shell/stock-in'
 import { Route as AuthenticatedShellStockOutRouteImport } from './routes/_authenticated/_shell/stock-out'
+import { Route as AuthenticatedShellTransactionsRouteImport } from './routes/_authenticated/_shell/transactions'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -48,6 +50,12 @@ const AuthenticatedShellRoute = AuthenticatedShellRouteImport.update({
   id: '/_shell',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedShellAlertsRoute =
+  AuthenticatedShellAlertsRouteImport.update({
+    id: '/alerts',
+    path: '/alerts',
+    getParentRoute: () => AuthenticatedShellRoute,
+  } as any)
 const AuthenticatedShellDashboardRoute =
   AuthenticatedShellDashboardRouteImport.update({
     id: '/dashboard',
@@ -71,26 +79,36 @@ const AuthenticatedShellStockOutRoute =
     path: '/stock-out',
     getParentRoute: () => AuthenticatedShellRoute,
   } as any)
+const AuthenticatedShellTransactionsRoute =
+  AuthenticatedShellTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthenticatedShellRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/alerts': typeof AuthenticatedShellAlertsRoute
   '/dashboard': typeof AuthenticatedShellDashboardRoute
   '/stock': typeof AuthenticatedShellStockRoute
   '/stock-in': typeof AuthenticatedShellStockInRoute
   '/stock-out': typeof AuthenticatedShellStockOutRoute
+  '/transactions': typeof AuthenticatedShellTransactionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/alerts': typeof AuthenticatedShellAlertsRoute
   '/dashboard': typeof AuthenticatedShellDashboardRoute
   '/stock': typeof AuthenticatedShellStockRoute
   '/stock-in': typeof AuthenticatedShellStockInRoute
   '/stock-out': typeof AuthenticatedShellStockOutRoute
+  '/transactions': typeof AuthenticatedShellTransactionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -100,10 +118,12 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/_shell': typeof AuthenticatedShellRouteWithChildren
+  '/_authenticated/_shell/alerts': typeof AuthenticatedShellAlertsRoute
   '/_authenticated/_shell/dashboard': typeof AuthenticatedShellDashboardRoute
   '/_authenticated/_shell/stock': typeof AuthenticatedShellStockRoute
   '/_authenticated/_shell/stock-in': typeof AuthenticatedShellStockInRoute
   '/_authenticated/_shell/stock-out': typeof AuthenticatedShellStockOutRoute
+  '/_authenticated/_shell/transactions': typeof AuthenticatedShellTransactionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -112,20 +132,24 @@ export interface FileRouteTypes {
     | '/auth'
     | '/forgot-password'
     | '/reset-password'
+    | '/alerts'
     | '/dashboard'
     | '/stock'
     | '/stock-in'
     | '/stock-out'
+    | '/transactions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/forgot-password'
     | '/reset-password'
+    | '/alerts'
     | '/dashboard'
     | '/stock'
     | '/stock-in'
     | '/stock-out'
+    | '/transactions'
   id:
     | '__root__'
     | '/'
@@ -134,10 +158,12 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/reset-password'
     | '/_authenticated/_shell'
+    | '/_authenticated/_shell/alerts'
     | '/_authenticated/_shell/dashboard'
     | '/_authenticated/_shell/stock'
     | '/_authenticated/_shell/stock-in'
     | '/_authenticated/_shell/stock-out'
+    | '/_authenticated/_shell/transactions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -192,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedShellRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/_shell/alerts': {
+      id: '/_authenticated/_shell/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AuthenticatedShellAlertsRouteImport
+      parentRoute: typeof AuthenticatedShellRoute
+    }
     '/_authenticated/_shell/dashboard': {
       id: '/_authenticated/_shell/dashboard'
       path: '/dashboard'
@@ -220,21 +253,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedShellStockOutRouteImport
       parentRoute: typeof AuthenticatedShellRoute
     }
+    '/_authenticated/_shell/transactions': {
+      id: '/_authenticated/_shell/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AuthenticatedShellTransactionsRouteImport
+      parentRoute: typeof AuthenticatedShellRoute
+    }
   }
 }
 
 interface AuthenticatedShellRouteChildren {
+  AuthenticatedShellAlertsRoute: typeof AuthenticatedShellAlertsRoute
   AuthenticatedShellDashboardRoute: typeof AuthenticatedShellDashboardRoute
   AuthenticatedShellStockRoute: typeof AuthenticatedShellStockRoute
   AuthenticatedShellStockInRoute: typeof AuthenticatedShellStockInRoute
   AuthenticatedShellStockOutRoute: typeof AuthenticatedShellStockOutRoute
+  AuthenticatedShellTransactionsRoute: typeof AuthenticatedShellTransactionsRoute
 }
 
 const AuthenticatedShellRouteChildren: AuthenticatedShellRouteChildren = {
+  AuthenticatedShellAlertsRoute: AuthenticatedShellAlertsRoute,
   AuthenticatedShellDashboardRoute: AuthenticatedShellDashboardRoute,
   AuthenticatedShellStockRoute: AuthenticatedShellStockRoute,
   AuthenticatedShellStockInRoute: AuthenticatedShellStockInRoute,
   AuthenticatedShellStockOutRoute: AuthenticatedShellStockOutRoute,
+  AuthenticatedShellTransactionsRoute: AuthenticatedShellTransactionsRoute,
 }
 
 const AuthenticatedShellRouteWithChildren =
