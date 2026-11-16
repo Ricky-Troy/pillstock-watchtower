@@ -184,9 +184,9 @@ function TransactionForm({ medicines }: { medicines: Medicine[] }) {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!medicineId) return toast.error("Choose a medicine");
+    if (!medicineId) { toast.error("Choose a medicine"); return; }
     const q = Number(quantity);
-    if (!Number.isInteger(q) || q <= 0) return toast.error("Quantity must be a whole number above zero");
+    if (!Number.isInteger(q) || q <= 0) { toast.error("Quantity must be a whole number above zero"); return; }
     mutation.mutate();
   }
 

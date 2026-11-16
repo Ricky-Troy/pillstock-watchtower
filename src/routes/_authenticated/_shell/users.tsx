@@ -122,7 +122,7 @@ function UsersPage() {
                       </TableCell>
                       <TableCell>
                         <Select
-                          value={u.role ?? undefined}
+                          value={u.role ?? ""}
                           onValueChange={(v) => changeRole(u, v as Role)}
                           disabled={busyId === u.id}
                         >
@@ -172,7 +172,7 @@ function CreateUserForm({ onCreated }: { onCreated: () => void }) {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!isStrongPassword(form.password)) return toast.error("Password doesn't meet the rules");
+    if (!isStrongPassword(form.password)) { toast.error("Password doesn't meet the rules"); return; }
     setBusy(true);
     try {
       const res = await create({ data: form });
@@ -241,7 +241,7 @@ function ResetPasswordDialog({ user, onClose }: { user: StaffMember | null; onCl
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!user) return;
-    if (!isStrongPassword(password)) return toast.error("Password doesn't meet the rules");
+    if (!isStrongPassword(password)) { toast.error("Password doesn't meet the rules"); return; }
     setBusy(true);
     try {
       const res = await reset({ data: { user_id: user.id, password } });

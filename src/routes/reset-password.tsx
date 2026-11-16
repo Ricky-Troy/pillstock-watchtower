@@ -43,12 +43,12 @@ function ResetPassword() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!isStrongPassword(password)) return setError("Choose a stronger password");
-    if (password !== confirm) return setError("Passwords don't match");
+    if (!isStrongPassword(password)) { setError("Choose a stronger password"); return; }
+    if (password !== confirm) { setError("Passwords don't match"); return; }
     setBusy(true);
     const { error: err } = await supabase.auth.updateUser({ password });
     setBusy(false);
-    if (err) return setError(err.message);
+    if (err) { setError(err.message); return; }
     await supabase.rpc("log_auth_event", { _event: "PASSWORD_RESET" });
     await supabase.auth.signOut();
     toast.success("Password updated", { description: "Sign in with your new password." });

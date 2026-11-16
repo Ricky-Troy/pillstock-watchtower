@@ -18,11 +18,11 @@ import { medicinesQuery, transactionsQuery } from "@/lib/queries";
 import { getStockStatus } from "@/lib/stock";
 import { useInvalidateStock } from "@/lib/use-invalidate";
 
-type Search = { medicine?: string };
+type Search = { medicine?: string | undefined };
 
 export const Route = createFileRoute("/_authenticated/_shell/stock-in")({
   validateSearch: (s: Record<string, unknown>): Search => ({
-    medicine: typeof s.medicine === "string" ? s.medicine : undefined,
+    medicine: typeof s["medicine"] === "string" ? s["medicine"] : undefined,
   }),
   loader: ({ context }) =>
     Promise.all([
@@ -75,9 +75,9 @@ function StockInPage() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!medicineId) return toast.error("Choose a medicine");
+    if (!medicineId) { toast.error("Choose a medicine"); return; }
     const q = Number(quantity);
-    if (!Number.isInteger(q) || q <= 0) return toast.error("Quantity must be a whole number above zero");
+    if (!Number.isInteger(q) || q <= 0) { toast.error("Quantity must be a whole number above zero"); return; }
     mutation.mutate();
   }
 

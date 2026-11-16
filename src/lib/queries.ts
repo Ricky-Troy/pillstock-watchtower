@@ -54,10 +54,10 @@ export const medicinesQuery = (includeArchived = false) =>
 const TXN_SELECT = "*, medicine:medicines(name, unit, category)";
 
 export type TransactionFilter = {
-  type?: "IN" | "OUT" | "ADJUST";
-  userId?: string;
-  since?: string;
-  limit?: number;
+  type?: "IN" | "OUT" | "ADJUST" | undefined;
+  userId?: string | undefined;
+  since?: string | undefined;
+  limit?: number | undefined;
 };
 
 export const transactionsQuery = (f: TransactionFilter = {}) =>

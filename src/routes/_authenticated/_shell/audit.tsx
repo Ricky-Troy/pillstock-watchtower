@@ -93,8 +93,8 @@ function AuditPage() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!medicineId) return toast.error("Choose a medicine");
-    if (!hasCount) return toast.error("Enter the physical count (0 or more)");
+    if (!medicineId) { toast.error("Choose a medicine"); return; }
+    if (!hasCount) { toast.error("Enter the physical count (0 or more)"); return; }
     record.mutate();
   }
 
