@@ -32,11 +32,11 @@ export const signInWithUsername = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const ident = data.username.toLowerCase();
 
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id, email, full_name, is_active")
-      .or(ident.includes("@") ? `email.eq.${ident}` : `username.eq.${ident}`)
-      .maybeSingle();
+    const base = supabaseAdmin.from("profiles").select("id, email, full_name, is_active");
+    const { data: profile } = await (ident.includes("@")
+      ? base.eq("email", ident)
+      : base.eq("username", ident)
+    ).maybeSingle();
 
     const logFailure = () =>
       supabaseAdmin.from("activity_logs").insert({

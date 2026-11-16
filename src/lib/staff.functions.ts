@@ -1,14 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { passwordSchema, usernameSchema } from "./password";
 
 const roleSchema = z.enum(["admin", "pharmacist", "storekeeper"]);
 
-type AuthedContext = {
-  supabase: { rpc: (fn: "has_role", args: { _user_id: string; _role: "admin" }) => PromiseLike<{ data: boolean | null }> };
-  userId: string;
-};
+type AuthedContext = { supabase: SupabaseClient<Database>; userId: string };
 
 async function requireAdmin(context: AuthedContext) {
   const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
@@ -48,7 +47,7 @@ export const createStaffUser = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { supabaseAdmin, log } = await requireAdmin(context as unknown as AuthedContext);
+    const { supabaseAdmin, log } = await requireAdmin(context);
 
     const { data: taken } = await supabaseAdmin
       .from("profiles")
@@ -89,7 +88,7 @@ export const updateStaffUser = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { supabaseAdmin, log } = await requireAdmin(context as unknown as AuthedContext);
+    const { supabaseAdmin, log } = await requireAdmin(context);
     const { data: current } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", data.user_id);
     const wasAdmin = current?.some((r) => r.role === "admin") ?? false;
     if (wasAdmin && data.role !== "admin" && (await countActiveAdmins(supabaseAdmin)) <= 1) {
@@ -106,7 +105,7 @@ export const setStaffActive = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ user_id: z.string().uuid(), active: z.boolean() }).parse(input))
   .handler(async ({ data, context }) => {
-    const ctx = context as unknown as AuthedContext;
+    const ctx: AuthedContext = context;
     if (data.user_id === ctx.userId && !data.active) {
       return { ok: false as const, error: "You can't deactivate your own account." };
     }
@@ -131,7 +130,7 @@ export const resetStaffPassword = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ user_id: z.string().uuid(), password: passwordSchema }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabaseAdmin, log } = await requireAdmin(context as unknown as AuthedContext);
+    const { supabaseAdmin, log } = await requireAdmin(context);
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.user_id, { password: data.password });
     if (error) return { ok: false as const, error: error.message };
     const { data: profile } = await supabaseAdmin.from("profiles").select("full_name").eq("id", data.user_id).single();
