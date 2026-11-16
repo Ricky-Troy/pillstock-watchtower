@@ -28,3 +28,11 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Every stock change goes through the security-definer SQL functions (record_stock_in, record_sale, record_audit, apply_audit_adjustment); clients have no write grants on stock columns, transactions, alerts or audits — keeps balances atomic and auditable.
+- Alerts are created/resolved only by the `evaluate_medicine_alerts` trigger on medicines — one source of truth for thresholds.
+- Role checks live in SQL (`has_role`, `has_any_role`, `is_staff`, active accounts only); UI route gating uses `canAccess` in src/lib/roles.ts, which must mirror the SQL rules.
+- Staff accounts are created/edited only by admin server functions in src/lib/staff.functions.ts (service-role client loaded inside handlers after an admin check); login resolves usernames server-side in src/lib/auth.functions.ts so emails never reach the browser.
+- Signed-in pages live under src/routes/_authenticated/_shell/ (sidebar layout + role gate in `_shell.tsx` beforeLoad).
+- Pure business rules (stock status, discrepancy, password policy, role access) live in src/lib/*.ts with tests in src/test/.
