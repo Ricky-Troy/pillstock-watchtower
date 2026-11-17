@@ -14,6 +14,8 @@ import { alertsQuery, meQuery } from "@/lib/queries";
 import { formatDateTime } from "@/lib/stock";
 import { useInvalidateStock } from "@/lib/use-invalidate";
 import { cn } from "@/lib/utils";
+import { useWebMCP } from "use-webmcp-tool";
+import { runWebMCPTool } from "@/lib/webmcp-telemetry";
 
 export const Route = createFileRoute("/_authenticated/_shell/alerts")({
   loader: ({ context }) => context.queryClient.ensureQueryData(alertsQuery),
@@ -50,6 +52,36 @@ function AlertsPage() {
       await invalidate();
     },
     onError: (e) => toast.error(errorMessage(e)),
+  });
+
+  useWebMCP({
+    name: "list_visible_alerts",
+    description: "List the stock alerts currently shown on the Alerts page (active or resolved tab).",
+    annotations: { readOnlyHint: true, untrustedContentHint: true },
+    execute: () =>
+      runWebMCPTool("list_visible_alerts", () =>
+        list.length === 0
+          ? `No ${tab === "ACTIVE" ? "active" : "resolved"} alerts shown.`
+          : list
+              .map((a) => `${a.alert_type === "OUT_OF_STOCK" ? "OUT" : "LOW"}: ${a.medicine?.name ?? "Unknown"} — ${a.message}`)
+              .join("\n"),
+      ),
+  });
+
+  useWebMCP({
+    name: "show_alert_tab",
+    description: "Switch the Alerts page between active and resolved alerts.",
+    inputSchema: {
+      type: "object",
+      properties: { tab: { type: "string", enum: ["ACTIVE", "RESOLVED"], description: "Which alerts to show." } },
+      required: ["tab"],
+    },
+    execute: ({ tab: next }: { tab: string }) =>
+      runWebMCPTool("show_alert_tab", () => {
+        if (next !== "ACTIVE" && next !== "RESOLVED") throw new Error("Unknown tab; expected ACTIVE or RESOLVED.");
+        setTab(next);
+        return `Showing ${next.toLowerCase()} alerts.`;
+      }),
   });
 
   return (
