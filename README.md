@@ -1,14 +1,18 @@
-# Welcome to your Lovable project
+# Pillstock Watchtower
+
+Create the Pharmacy Medicine Stock Management System based on the attached documentation to manage medicines, monitor stock levels, record stock-in and stock-out sales transactions, provide automated low-stock and out-of-stock alerts, support physical stock audits with discrepancy calculation, and provide role-based dashboards for Administrator, Pharmacist, and Storekeeper.
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://pillstock-watchtower.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/11644aca-183d-44fb-82e9-5d919984966d).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +24,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
