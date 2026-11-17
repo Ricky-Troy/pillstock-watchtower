@@ -36,3 +36,5 @@ use the editor.
 - Staff accounts are created/edited only by admin server functions in src/lib/staff.functions.ts (service-role client loaded inside handlers after an admin check); login resolves usernames server-side in src/lib/auth.functions.ts so emails never reach the browser.
 - Signed-in pages live under src/routes/_authenticated/_shell/ (sidebar layout + role gate in `_shell.tsx` beforeLoad).
 - Pure business rules (stock status, discrepancy, password policy, role access) live in src/lib/*.ts with tests in src/test/.
+- The MCP server for external assistants lives in src/lib/mcp/ (one tool per file, registered in index.ts) and verifies OAuth tokens from the backend auth issuer; tools query as the caller via `supabaseForUser`, so existing roles/RLS decide access — never use the service-role client there.
+- The OAuth consent page is src/routes/[.]lovable.oauth.consent.tsx; /auth honors a validated `next` return path (oauthReturnPath) so sign-in returns to consent.

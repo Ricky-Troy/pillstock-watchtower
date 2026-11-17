@@ -12,10 +12,14 @@ import { PasswordChecklist, PasswordInput } from "@/components/auth/PasswordFiel
 import { supabase } from "@/integrations/supabase/client";
 import { createFirstAdmin, getSetupStatus, registerAccount, signInWithUsername } from "@/lib/auth.functions";
 import { isStrongPassword } from "@/lib/password";
+import { oauthReturnPath } from "@/lib/oauth-return-path";
 
 const setupQuery = queryOptions({ queryKey: ["setup-status"], queryFn: () => getSetupStatus() });
 
 export const Route = createFileRoute("/auth")({
+  // Optional return path (e.g. an assistant connection consent page) to open after sign-in.
+  validateSearch: (s: Record<string, unknown>): { next?: string } =>
+    typeof s["next"] === "string" ? { next: s["next"] } : {},
   loader: ({ context }) => context.queryClient.ensureQueryData(setupQuery),
   head: () => ({
     meta: [
@@ -31,18 +35,22 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const { data } = useSuspenseQuery(setupQuery);
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const returnTo = next ? oauthReturnPath(next) : null;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: s }) => {
-      if (s.session) navigate({ to: "/dashboard", replace: true });
+      if (!s.session) return;
+      if (returnTo && returnTo !== "/") navigate({ href: returnTo, replace: true });
+      else navigate({ to: "/dashboard", replace: true });
     });
-  }, [navigate]);
+  }, [navigate, returnTo]);
 
   const [mode, setMode] = useState<"login" | "register">("login");
   if (data.needsSetup) return <AuthLayout><SetupForm /></AuthLayout>;
   return (
     <AuthLayout>
-      {mode === "login" ? <LoginForm /> : <RegisterForm onDone={() => setMode("login")} />}
+      {mode === "login" ? <LoginForm returnTo={returnTo} /> : <RegisterForm onDone={() => setMode("login")} />}
       <p className="mt-6 text-center text-sm text-muted-foreground">
         {mode === "login" ? "New here? " : "Already have an account? "}
         <button type="button" className="font-medium text-primary hover:underline" onClick={() => setMode(mode === "login" ? "register" : "login")}>
@@ -53,7 +61,7 @@ function AuthPage() {
   );
 }
 
-function LoginForm() {
+function LoginForm({ returnTo }: { returnTo: string | null }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +90,8 @@ function LoginForm() {
       });
       if (sessionError) throw sessionError;
       queryClient.removeQueries({ queryKey: ["me"] });
-      navigate({ to: "/dashboard", replace: true });
+      if (returnTo && returnTo !== "/") navigate({ href: returnTo, replace: true });
+      else navigate({ to: "/dashboard", replace: true });
     } catch {
       setError("Could not sign in right now. Please try again.");
     } finally {
