@@ -132,3 +132,46 @@ export const createFirstAdmin = createServerFn({ method: "POST" })
     });
     return { ok: true as const };
   });
+
+const registerSchema = z.object({
+  full_name: z.string().trim().min(2, "Enter a full name").max(100),
+  username: usernameSchema,
+  email: z.string().trim().toLowerCase().email("Enter a valid email").max(255),
+  password: passwordSchema,
+  role: z.enum(["pharmacist", "storekeeper"]),
+});
+
+/** Public self-registration: creates a Pharmacist or Storekeeper account with instant access. */
+export const registerAccount = createServerFn({ method: "POST" })
+  .inputValidator((input) => registerSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: taken } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("username", data.username)
+      .maybeSingle();
+    if (taken) return { ok: false as const, error: "That username is already taken." };
+
+    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: { username: data.username, full_name: data.full_name },
+    });
+    if (error || !created.user) {
+      const msg = error?.message?.toLowerCase().includes("already") ? "That email is already registered." : "Could not create the account.";
+      return { ok: false as const, error: msg };
+    }
+    await supabaseAdmin
+      .from("profiles")
+      .upsert({ id: created.user.id, username: data.username, full_name: data.full_name, email: data.email });
+    await supabaseAdmin.from("user_roles").insert({ user_id: created.user.id, role: data.role });
+    await supabaseAdmin.from("activity_logs").insert({
+      user_id: created.user.id,
+      user_name: data.full_name,
+      action: "REGISTER",
+      details: `Self-registered as ${data.role}`,
+    });
+    return { ok: true as const };
+  });
