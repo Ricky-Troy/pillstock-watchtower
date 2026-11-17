@@ -17,6 +17,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedShellRouteImport } from './routes/_authenticated/_shell'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedShellActivityRouteImport } from './routes/_authenticated/_shell/activity'
 import { Route as AuthenticatedShellAlertsRouteImport } from './routes/_authenticated/_shell/alerts'
 import { Route as AuthenticatedShellAuditRouteImport } from './routes/_authenticated/_shell/audit'
@@ -66,6 +67,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
 const AuthenticatedShellRoute = AuthenticatedShellRouteImport.update({
   id: '/_shell',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedShellActivityRoute =
   AuthenticatedShellActivityRouteImport.update({
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/activity': typeof AuthenticatedShellActivityRoute
   '/alerts': typeof AuthenticatedShellAlertsRoute
   '/audit': typeof AuthenticatedShellAuditRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/activity': typeof AuthenticatedShellActivityRoute
   '/alerts': typeof AuthenticatedShellAlertsRoute
   '/audit': typeof AuthenticatedShellAuditRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/_shell': typeof AuthenticatedShellRouteWithChildren
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/_shell/activity': typeof AuthenticatedShellActivityRoute
   '/_authenticated/_shell/alerts': typeof AuthenticatedShellAlertsRoute
   '/_authenticated/_shell/audit': typeof AuthenticatedShellAuditRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/reset-password'
     | '/.well-known/oauth-protected-resource'
+    | '/.lovable/oauth/consent'
     | '/activity'
     | '/alerts'
     | '/audit'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/reset-password'
     | '/.well-known/oauth-protected-resource'
+    | '/.lovable/oauth/consent'
     | '/activity'
     | '/alerts'
     | '/audit'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/_shell'
+    | '/.lovable/oauth/consent'
     | '/_authenticated/_shell/activity'
     | '/_authenticated/_shell/alerts'
     | '/_authenticated/_shell/audit'
@@ -249,6 +261,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -308,6 +321,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedShellRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/_shell/activity': {
       id: '/_authenticated/_shell/activity'
@@ -431,6 +451,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
